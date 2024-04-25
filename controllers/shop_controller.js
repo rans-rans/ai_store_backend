@@ -50,13 +50,24 @@ async function removeFromCart(userId, product_id) {
   }
 }
 
+async function editCartitemQuantity(userId, productId, quantity) {
+  const query = dbQueries.updateCartitemQuantity(userId, productId, quantity);
+  try {
+    await db.execute(query);
+    return "operation successful";
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   addProductToCart,
+  editCartitemQuantity,
   getProducts,
   getBrands,
   getCategories,
   getProductsProductsByCategory,
   getProductsProductsByBrand,
   getUserCart,
-  removeFromCart
+  removeFromCart,
 };

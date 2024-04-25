@@ -49,6 +49,28 @@ router.post("/fetch-user-cart", async function (req, res) {
   const cart = await shopController.getUserCart(userId);
   res.send(cart[0]);
 });
+
+router.post("/edit-cartitem-quantity", async function (req, res) {
+  const userId = req.body["user_id"];
+  const productId = req.body["product_id"];
+  const quantity = req.body["quantity"];
+
+  shopController
+    .editCartitemQuantity(userId, productId, quantity)
+    .then((response) => {
+      res.send({
+        status: "success",
+        message: response,
+      });
+    })
+    .catch((error) => {
+      res.send({
+        status: "operation failed",
+        message: error,
+      });
+    });
+});
+
 router.post("/remove-from-cart", async function (req, res) {
   const userId = req.body["user_id"];
   const productId = req.body["product_id"];

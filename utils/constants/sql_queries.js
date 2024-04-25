@@ -57,6 +57,16 @@ WHERE user_id = ${userId}
 AND product_id = ${productId}`;
 }
 
+function updateCartitemQuantity(userId, productId, quantity) {
+  return `
+  UPDATE cart_items
+SET quantity = quantity + ${quantity}
+WHERE user_id = ${userId}
+AND product_id = ${productId}
+AND quantity > 0; 
+  `;
+}
+
 const fetchAllBrands = `
 SELECT * from brands`;
 const fetchAllCategories = `
@@ -71,4 +81,5 @@ module.exports = {
   fetchProductsByCategory,
   fetchUserCart,
   removeFromCart,
+  updateCartitemQuantity
 };
