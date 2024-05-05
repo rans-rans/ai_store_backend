@@ -1,7 +1,10 @@
 const express = require("express");
 const shopController = require("../../controllers/shop_controller");
+const authMiddleware = require("../../middlewares/auth_middleware");
 
 const router = express.Router();
+
+router.use(authMiddleware.authenticateToken);
 
 router.post("/add-to-cart", async function (req, res) {
   const cartItem = req.body;
