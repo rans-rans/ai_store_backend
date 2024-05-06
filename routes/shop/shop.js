@@ -32,14 +32,14 @@ router.post("/add-order", async function (req, res) {
 });
 
 router.post("/fetch-products", async function (req, res) {
-  const userId = req.body["user_id"];
+  const userId = req.body.id;
   const allProducts = await shopController.getProducts(userId);
   res.send(allProducts);
 });
 
 router.post("/fetch-category-products", async function (req, res) {
-  const categoryId = req.body.id;
-  const userId = req.body["user_id"];
+  const categoryId = req.body.category_id;
+  const userId = req.body.id;
   const products = await shopController.getProductsProductsByCategory(
     categoryId,
     userId
@@ -48,8 +48,8 @@ router.post("/fetch-category-products", async function (req, res) {
 });
 
 router.post("/fetch-brand-products", async function (req, res) {
-  const userId = req.body.user_id;
-  const brandId = req.body.id;
+  const userId = req.body.id;
+  const brandId = req.body.brand_id;
   const products = await shopController.getProductsProductsByBrand(
     brandId,
     userId
@@ -68,13 +68,13 @@ router.get("/fetch-categories", async function (req, res) {
 });
 
 router.post("/fetch-user-cart", async function (req, res) {
-  const userId = req.body["user_id"];
+  const userId = req.body.id;
   const cart = await shopController.getUserCart(userId);
   res.send(cart[0]);
 });
 
 router.post("/edit-cartitem-quantity", async function (req, res) {
-  const userId = req.body["user_id"];
+  const userId = req.body["id"];
   const productId = req.body["product_id"];
   const quantity = req.body["quantity"];
 
@@ -95,7 +95,7 @@ router.post("/edit-cartitem-quantity", async function (req, res) {
 });
 
 router.post("/remove-from-cart", async function (req, res) {
-  const userId = req.body["user_id"];
+  const userId = req.body["id"];
   const productId = req.body["product_id"];
   shopController
     .removeFromCart(userId, productId)

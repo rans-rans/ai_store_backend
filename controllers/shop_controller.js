@@ -6,7 +6,7 @@ async function addProductToCart(cartData) {
     const query = dbQueries.addProductToCart;
     const response = await database.query(query, [
       cartData.product_id,
-      cartData.user_id,
+      cartData.id,
       cartData.variant,
       cartData.quantity,
     ]);
@@ -21,7 +21,7 @@ async function addOrder(data) {
     const query = dbQueries.addOrder;
     const orderData = data["data"];
     const response = await database.query(query, [
-      orderData["user_id"],
+      orderData["id"],
       orderData["order_date"],
       orderData["delivery_location"],
       orderData["cart"],
@@ -33,19 +33,33 @@ async function addOrder(data) {
   }
 }
 
+async function editCartitemQuantity(userId, productId, quantity) {
+  const query = dbQueries.updateCartitemQuantity;
+  try {
+    const response = await database.query(query, [
+      quantity,
+      userId,
+      productId,
+    ]);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
 async function getProducts(userId) {
-  const query = dbQueries.fetchAllProductsQuery(userId);
-  const databaseResult = await database.execute(query);
+  const query = dbQueries.fetchAllProductsQuery;
+  const databaseResult = await database.query(query, [userId]);
   return databaseResult[0];
 }
-async function getProductsProductsByCategory(id, userId) {
-  const query = dbQueries.fetchProductsByCategory(id, userId);
-  const databaseResult = await database.execute(query);
+async function getProductsProductsByCategory(categoryId, userId) {
+  const query = dbQueries.fetchProductsByCategory;
+  const databaseResult = await database.query(query, [userId, categoryId]);
   return databaseResult;
 }
-async function getProductsProductsByBrand(id, userId) {
-  const query = dbQueries.fetchProductsByBrand(id, userId);
-  const databaseResult = await database.execute(query);
+async function getProductsProductsByBrand(categoryId, userId) {
+  const query = dbQueries.fetchProductsByBrand;
+  const databaseResult = await database.query(query, [userId, categoryId]);
   return databaseResult;
 }
 async function getBrands() {
@@ -58,44 +72,41 @@ async function getCategories() {
 }
 
 async function getUserCart(userId) {
-  const query = dbQueries.fetchUserCart(userId);
-  const result = await database.execute(query);
+  const query = dbQueries.fetchUserCart;
+  const result = await database.query(query, [userId]);
   return result;
 }
 
-async function removeFromCart(userId, product_id) {
-  const query = dbQueries.removeFromCart(userId, product_id);
-  try {
-    const response = await database.execute(query);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-}
-
-async function editCartitemQuantity(userId, productId, quantity) {
-  const query = dbQueries.updateCartitemQuantity(userId, productId, quantity);
-  try {
-    const response = await database.execute(query);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-}
-
 async function rateProduct(data) {
-  const query = dbQueries.rateProduct(data);
+  const query = dbQueries.rateProduct;
   try {
-    const response = await database.execute(query);
+    const response = await database.query(query, [
+      data.product_id,
+      data.id,
+      data.score,
+      data.comment,
+      data.date_created,
+    ]);
     return response.toString();
   } catch (error) {
     throw error;
   }
 }
-async function removeSavedProduct(data) {
-  const query = dbQueries.removeSavedProduct(data);
+
+async function removeFromCart(userId, product_id) {
+  const query = dbQueries.removeFromCart;
   try {
-    const response = await database.execute(query);
+    const response = await database.query(query, [userId, product_id]);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function removeSavedProduct(data) {
+  const query = dbQueries.removeSavedProduct;
+  try {
+    const response = await database.query(query, [data.product_id, data.id]);
     return response.toString();
   } catch (error) {
     throw error;
@@ -103,9 +114,9 @@ async function removeSavedProduct(data) {
 }
 
 async function saveProduct(data) {
-  const query = dbQueries.saveProduct(data);
+  const query = dbQueries.saveProduct;
   try {
-    const response = await database.execute(query);
+    const response = await database.query(query, [data.product_id, data.id]);
     return response.toString();
   } catch (error) {
     throw error;
@@ -113,7 +124,7 @@ async function saveProduct(data) {
 }
 
 async function toggleFavorite(data) {
-  const userId = data.user_id;
+  const userId = data.id;
   const productId = data.product_id;
 
   try {
@@ -124,7 +135,8 @@ async function toggleFavorite(data) {
 
     if (exists[0].length) {
       const deleteResponse = await database.query(
-        `delete from favorites where product_id = ${productId} and user_id = ${userId}`
+        `delete from favorites where product_id = ? and user_id = ?`,
+        [productId, userId]
       );
       return {
         is_favorite: false,
@@ -132,7 +144,8 @@ async function toggleFavorite(data) {
       };
     }
     const insertResponse = await database.query(
-      `insert into favorites(product_id,user_id) values (${productId},${userId})`
+      `insert into favorites(product_id,user_id) values (?,?)`,
+      [productId, userId]
     );
 
     return {

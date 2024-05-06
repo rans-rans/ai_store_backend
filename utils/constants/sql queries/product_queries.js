@@ -9,47 +9,40 @@ const addOrder = `
   VALUES  (?,?,?,?,?)
   `;
 
-function fetchProductsByCategory(categoryId, userId) {
-  const products = fetchAllProductsQuery(userId);
-  return products + ` WHERE category_id = ${categoryId}`;
-}
-function fetchProductsByBrand(brandId, userId) {
-  const products = fetchAllProductsQuery(userId);
-  return products + ` WHERE brand_id = ${brandId}`;
-}
+const fetchAllProductsQuery = `
+  SELECT 
+    p.id,
+    p.name,
+    p.price,
+    p.quantity,
+    p.brand_id,
+    p.category_id,
+    b.name AS brand_name,
+    c.name AS category_name,
+    p.discount,
+    p.images,
+    p.description,
+    p.variants,
+    CASE
+      WHEN f.user_id IS NOT NULL THEN TRUE
+      ELSE FALSE
+    END AS is_favorite
+  FROM 
+    products p
+  JOIN 
+    brands b ON p.brand_id = b.id
+  JOIN 
+    categories c ON p.category_id = c.id
+  LEFT JOIN
+    favorites f ON p.id = f.product_id AND f.user_id = ?
+  `;
 
-function fetchAllProductsQuery(userId) {
-  return `
-SELECT 
-  p.id,
-  p.name,
-  p.price,
-  p.quantity,
-  p.brand_id,
-  p.category_id,
-  b.name AS brand_name,
-  c.name AS category_name,
-  p.discount,
-  p.images,
-  p.description,
-  p.variants,
-  CASE
-    WHEN f.user_id IS NOT NULL THEN TRUE
-    ELSE FALSE
-  END AS is_favorite
-FROM 
-  products p
-JOIN 
-  brands b ON p.brand_id = b.id
-JOIN 
-  categories c ON p.category_id = c.id
-LEFT JOIN
-  favorites f ON p.id = f.product_id AND f.user_id = ${userId} 
-`;
-}
+const fetchProductsByCategory =
+  fetchAllProductsQuery + ` WHERE category_id = ?`;
 
-function fetchUserCart(userId) {
-  return `
+const fetchProductsByBrand = fetchAllProductsQuery + ` WHERE brand_id = ?`;
+
+const fetchUserCart = `
   SELECT 
     p.name,
     p.price,
@@ -64,48 +57,37 @@ FROM
 JOIN 
     products p ON ci.product_id = p.id
 WHERE 
-    ci.user_id = ${userId}
+    ci.user_id = ?
   `;
-}
 
-function removeFromCart(userId, productId) {
-  return `
+const removeFromCart = `
 DELETE FROM cart_items
-WHERE user_id = ${userId} 
-AND product_id = ${productId}`;
-}
+WHERE user_id = ?
+AND product_id = ?`;
 
-function updateCartitemQuantity(userId, productId, quantity) {
-  return `
+const updateCartitemQuantity = `
   UPDATE cart_items
-SET quantity =  ${quantity}
-WHERE user_id = ${userId}
-AND product_id = ${productId}
+SET quantity =  ?
+WHERE user_id = ?
+AND product_id = ? 
 AND quantity > 0; 
   `;
-}
 
-function rateProduct(data) {
-  return `
+const rateProduct = `
   INSERT INTO
   ratings (product_id, user_id,score,comment,date_created)
-  VALUES (${data.product_id},${data.user_id},${data.score},${data.comment},${data.date_created})
+  VALUES (?,?,?,?,?)
   `;
-}
 
-function removeSavedProduct(data) {
-  return `
-  DELETE FROM favorites WHERE (product_id = ${data.product_id}) and (user_id = ${data.user_id});
+const removeSavedProduct = `
+  DELETE FROM favorites WHERE (product_id = ?) and (user_id = ?);
   `;
-}
 
-function saveProduct(data) {
-  return `  
+const saveProduct = `  
   INSERT INTO
   saved (product_id, user_id)
-  VALUES (${data.product_id},${data.userId})
+  VALUES (?,?)
   `;
-}
 
 const fetchAllBrands = `
 SELECT * from brands`;

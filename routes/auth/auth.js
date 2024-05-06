@@ -21,9 +21,9 @@ router.post("/create-user", async (req, res) => {
     .then((response) => {
       const token = jwt.sign(user, process.env.JWTSECRET);
       res.status(201).json({
-        userId: response.userId,
-        token: token,
         message: "User creation successful",
+        token: token,
+        user: response.user,
       });
     })
     .catch((error) => {
@@ -35,27 +35,49 @@ router.post("/create-user", async (req, res) => {
 });
 
 //end-point to log in the user
-router.post("/login", authMiddleware.authenticateToken, async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
-    const user = await controller.login(req.body);
+    const user = await controller.login(req.body.email);
+    if (user === undefined) {
+      return res.status(401).json({ message: "invalid credentials" });
+    }
     const passwordCorrect = await bcrypt.compare(
       req.body.password,
       user.password
     );
 
+    const passwordHash = await bcrypt.hash(user.password, 10);
+    const token = jwt.sign(
+      {
+        email: user.email,
+        password: passwordHash,
+      },
+      process.env.JWTSECRET
+    );
+
     if (passwordCorrect) {
       return res.send({
-        id: user.id,
-        login: true,
+        user: user,
+        token: token,
         message: "login successful",
       });
     }
-    return res
-      .status(401)
-      .json({ login: false, message: "invalid credentials" });
+    return res.status(401).json({ message: "invalid credentials" });
   } catch (error) {
     res.send({
       error: error,
+    });
+  }
+});
+
+router.post("/logout", authMiddleware.authenticateToken, async (req, res) => {
+  const userId = req.body.id;
+  try {
+    await controller.logout(userId);
+    return res.send("user logout success");
+  } catch (error) {
+    res.send({
+      error: "internal server error",
     });
   }
 });
