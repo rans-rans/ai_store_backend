@@ -18,14 +18,13 @@ router.post("/add-to-cart", async function (req, res) {
     });
 });
 
-router.post("/fetch-products", async function (req, res) {
-  const userId = req.body.id;
-  const allProducts = await shopController.getProducts(userId);
+router.get("/fetch-products", async function (req, res) {
+  const allProducts = await shopController.getProducts();
   res.send(allProducts);
 });
 
 router.post("/fetch-category-products", async function (req, res) {
-  const categoryId = req.body.category_id;
+  const categoryId = req.body["category_id"];
   const userId = req.body.id;
   const products = await shopController.getProductsProductsByCategory(
     categoryId,
@@ -35,8 +34,8 @@ router.post("/fetch-category-products", async function (req, res) {
 });
 
 router.post("/fetch-brand-products", async function (req, res) {
-  const userId = req.body.id;
-  const brandId = req.body.brand_id;
+  const userId = req.body["id"];
+  const brandId = req.body["brand_id"];
   const products = await shopController.getProductsProductsByBrand(
     brandId,
     userId
@@ -52,6 +51,20 @@ router.get("/fetch-brands", async function (req, res) {
 router.get("/fetch-categories", async function (req, res) {
   const categories = await shopController.getCategories();
   res.send(categories[0]);
+});
+
+router.post("/fetch-product-details", async function (req, res) {
+  const productId = req.body["product_id"];
+  const userId = req.body["user_id"];
+
+  shopController
+    .getProductDetails(productId, userId)
+    .then((details) => {
+      res.send(details);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
 });
 
 router.post("/fetch-user-cart", async function (req, res) {

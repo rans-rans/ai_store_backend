@@ -16,7 +16,6 @@ async function addToOrders(params, totalCost) {
 
     return response;
   } catch (error) {
-    console.log(`error  in  addToOrders ${error}`);
     throw error;
   }
 }
@@ -32,7 +31,6 @@ async function addToPayments(params, reference, paymentId, totalCost) {
     ]);
     return response;
   } catch (error) {
-    console.log(`error  in  addToPayments ${error}`);
     throw error;
   }
 }
@@ -44,7 +42,6 @@ async function completeOrder(cart) {
       await database.query(query, [item.quantity, item.product_id]);
     });
   } catch (error) {
-    console.log(`error  in  completeOrder ${error}`);
     throw error;
   }
 }
@@ -54,7 +51,6 @@ async function clearCart(user_id) {
     const query = dbQueries.clearCart;
     await database.query(query, [user_id]);
   } catch (error) {
-    console.log(`error  in  clearCart ${error}`);
     throw error;
   }
 }
