@@ -14,9 +14,6 @@ app.get("/", (req, res) => {
   res.send("Let there be light, and there was light");
 });
 
-app.post("/", (req, res) => {
-  console.log(req.body);
-});
 
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);

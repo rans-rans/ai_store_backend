@@ -18,19 +18,6 @@ router.post("/add-to-cart", async function (req, res) {
     });
 });
 
-router.post("/add-order", async function (req, res) {
-  const order = req.body;
-  shopController
-    .addOrder(order)
-    .then((response) => {
-      //TODO clear out the user-cart
-      res.send({ status: "success", message: response });
-    })
-    .catch((error) => {
-      res.send({ status: "failed", message: error });
-    });
-});
-
 router.post("/fetch-products", async function (req, res) {
   const userId = req.body.id;
   const allProducts = await shopController.getProducts(userId);
@@ -183,14 +170,6 @@ router.post("/toggle-favorite", function (req, res) {
         message: error,
       });
     });
-});
-
-// router.post("payment-status", async function (req, res) {
-//   //TODO do something about the payment response
-// });
-
-router.post("/payment-webhook", (req, res) => {
-  res.send(req.body);
 });
 
 module.exports = router;

@@ -16,23 +16,6 @@ async function addProductToCart(cartData) {
   }
 }
 
-async function addOrder(data) {
-  try {
-    const query = dbQueries.addOrder;
-    const orderData = data["data"];
-    const response = await database.query(query, [
-      orderData["id"],
-      orderData["order_date"],
-      orderData["delivery_location"],
-      orderData["cart"],
-      orderData["total_cost"],
-    ]);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-}
-
 async function editCartitemQuantity(userId, productId, quantity) {
   const query = dbQueries.updateCartitemQuantity;
   try {
@@ -159,7 +142,6 @@ async function toggleFavorite(data) {
 
 module.exports = {
   addProductToCart,
-  addOrder,
   editCartitemQuantity,
   getProducts,
   getBrands,

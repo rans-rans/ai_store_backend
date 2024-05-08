@@ -3,11 +3,6 @@ const addProductToCart = `
   cart_items (product_id, user_id, variant, quantity) 
   VALUES (?,?,?,?)`;
 
-const addOrder = `
-  INSERT INTO
-  orders (user_id,date,location,cart,total_cost)
-  VALUES  (?,?,?,?,?)
-  `;
 
 const fetchAllProductsQuery = `
   SELECT 
@@ -99,7 +94,6 @@ module.exports = {
   fetchAllBrands,
   fetchAllCategories,
   addProductToCart,
-  addOrder,
   fetchProductsByBrand,
   fetchProductsByCategory,
   fetchUserCart,
