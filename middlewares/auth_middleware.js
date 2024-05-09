@@ -5,15 +5,15 @@ const database = require("../utils/resources/database");
 async function authenticateToken(req, res, next) {
   const authHead = req.headers.authorization;
   const token = authHead && authHead.split(" ")[1];
-
+  
   const signed = await isUserLogIn(req.body.id, req.body.email);
-
+  
   if (req.method !== "GET") {
-    if (!token || !signed) return res.sendStatus(401);
+    if (!token && !signed) return res.sendStatus(401);
   } else {
     if (!token) return res.sendStatus(401);
   }
-
+  
   jwt.verify(token, process.env.JWTSECRET, async (err, user) => {
     if (err) return res.sendStatus(401);
     req.user = user;

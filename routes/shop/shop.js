@@ -18,11 +18,6 @@ router.post("/add-to-cart", async function (req, res) {
     });
 });
 
-router.get("/fetch-products", async function (req, res) {
-  const allProducts = await shopController.getProducts();
-  res.send(allProducts);
-});
-
 router.post("/fetch-category-products", async function (req, res) {
   const categoryId = req.body["category_id"];
   const userId = req.body.id;
@@ -31,6 +26,17 @@ router.post("/fetch-category-products", async function (req, res) {
     userId
   );
   res.send(products[0]);
+});
+
+router.post("/fetch-product-ratings", async (req, res) => {
+  const data = req.body;
+  const ratings = await shopController.getProductRatings(data["product_id"]);
+  res.send(ratings);
+});
+
+router.get("/fetch-products", async function (req, res) {
+  const allProducts = await shopController.getProducts();
+  res.send(allProducts);
 });
 
 router.post("/fetch-brand-products", async function (req, res) {
@@ -94,6 +100,24 @@ router.post("/edit-cartitem-quantity", async function (req, res) {
     });
 });
 
+router.post("/rate-product", async function (req, res) {
+  const data = req.body;
+  shopController
+    .rateProduct(data)
+    .then((response) => {
+      res.send({
+        status: true,
+        message: response,
+      });
+    })
+    .catch((error) => {
+      res.status(504).send({
+        status: false,
+        message: error,
+      });
+    });
+});
+
 router.post("/remove-from-cart", async function (req, res) {
   const userId = req.body["id"];
   const productId = req.body["product_id"];
@@ -113,25 +137,25 @@ router.post("/remove-from-cart", async function (req, res) {
     });
 });
 
-router.post("/rate-product", async function (req, res) {
+router.post("/remove-product-rating", (req, res) => {
   const data = req.body;
   shopController
-    .rateProduct(data)
-    .then((response) => {
+    .removeProductRating(data["product_id"], data["id"])
+    .then((_) => {
       res.send({
-        status: "success",
-        message: response,
+        status: true,
+        message: "Rating removed successfully",
       });
     })
-    .catch((error) => {
+    .catch((_) => {
       res.send({
-        status: "failed",
-        message: error,
+        status: false,
+        message: "Unable to remove rating",
       });
     });
 });
 
-router.post("/remove-saved-product", function (req, res) {
+router.post("/remove-saved-product", (req, res) => {
   const data = req.body;
   shopController
     .removeSavedProduct(data)

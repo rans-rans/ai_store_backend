@@ -27,29 +27,37 @@ async function editCartitemQuantity(userId, productId, quantity) {
 }
 
 async function getProducts() {
-  const query = dbQueries.fetchAllProductsQuery;
-  const databaseResult = await database.query(query, []);
-  return databaseResult[0];
+  try {
+    const query = dbQueries.fetchAllProductsQuery;
+    const databaseResult = await database.query(query, []);
+    return databaseResult[0];
+  } catch (error) {
+    res.send(error);
+  }
 }
 async function getProductDetails(productId, userId) {
   try {
-    
     const query = dbQueries.fetchProductDetails;
     const databaseResult = await database.query(query, [userId, productId]);
-    const result=databaseResult[0]
-    return  result[0]
+    const result = databaseResult[0];
+    return result[0];
   } catch (error) {
     throw error;
   }
 }
-async function getProductsProductsByCategory(categoryId, userId) {
-  const query = dbQueries.fetchProductsByCategory;
-  const databaseResult = await database.query(query, [userId, categoryId]);
-  return databaseResult;
+async function getProductRatings(productId) {
+  const query = dbQueries.fetchProductRatings;
+  const databaseResult = await database.query(query, [productId]);
+  return databaseResult[0];
 }
-async function getProductsProductsByBrand(categoryId, userId) {
+async function getProductsProductsByCategory(categoryId) {
+  const query = dbQueries.fetchProductsByCategory;
+  const databaseResult = await database.query(query, [categoryId]);
+  return databaseResult[0];
+}
+async function getProductsProductsByBrand(brandId) {
   const query = dbQueries.fetchProductsByBrand;
-  const databaseResult = await database.query(query, [userId, categoryId]);
+  const databaseResult = await database.query(query, [brandId]);
   return databaseResult;
 }
 async function getBrands() {
@@ -71,11 +79,11 @@ async function rateProduct(data) {
   const query = dbQueries.rateProduct;
   try {
     const response = await database.query(query, [
-      data.product_id,
-      data.id,
-      data.score,
-      data.comment,
-      data.date_created,
+      data["product_id"],
+      data["id"],
+      data["score"],
+      data["comment"],
+      data["date_created"],
     ]);
     return response.toString();
   } catch (error) {
@@ -87,6 +95,16 @@ async function removeFromCart(userId, product_id) {
   const query = dbQueries.removeFromCart;
   try {
     const response = await database.query(query, [userId, product_id]);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function removeProductRating() {
+  const query = dbQueries.removeProductRating;
+  try {
+    const response = await database.query(query, [productId, userId]);
     return response;
   } catch (error) {
     throw error;
@@ -154,11 +172,13 @@ module.exports = {
   getBrands,
   getCategories,
   getProductDetails,
+  getProductRatings,
   getProductsProductsByCategory,
   getProductsProductsByBrand,
   getUserCart,
   removeFromCart,
   rateProduct,
+  removeProductRating,
   removeSavedProduct,
   saveProduct,
   toggleFavorite,

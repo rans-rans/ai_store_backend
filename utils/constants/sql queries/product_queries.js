@@ -3,6 +3,12 @@ const addProductToCart = `
   cart_items (product_id, user_id, variant, quantity) 
   VALUES (?,?,?,?)`;
 
+const fetchAllBrands = `
+SELECT * from brands`;
+
+const fetchAllCategories = `
+SELECT * from categories`;
+
 const fetchAllProductsQuery = `
 SELECT 
     p.id,
@@ -26,10 +32,6 @@ LEFT JOIN (
         product_id
 ) AS r ON p.id = r.product_id`;
 
-const ratings = `
-select *  from  ratings
-`;
-
 const fetchProductDetails = `
     SELECT 
       p.id,
@@ -40,6 +42,7 @@ const fetchProductDetails = `
       c.name AS category_name,
       p.discount,
       p.images,
+      IFNULL(avg_score, -1) AS rating_score,
       p.description,
       p.variants,
       CASE
@@ -52,6 +55,11 @@ const fetchProductDetails = `
       brands b ON p.brand_id = b.id
     JOIN 
       categories c ON p.category_id = c.id
+    LEFT JOIN (
+        SELECT product_id,AVG(score) AS avg_score
+        FROM ratings
+        GROUP BY product_id
+    ) AS r ON p.id = r.product_id
     LEFT JOIN
       favorites f ON p.id = f.product_id AND f.user_id = ?
     WHERE p.id = ?
@@ -61,6 +69,11 @@ const fetchProductsByCategory =
   fetchAllProductsQuery + ` WHERE category_id = ?`;
 
 const fetchProductsByBrand = fetchAllProductsQuery + ` WHERE brand_id = ?`;
+
+const fetchProductRatings = `
+select * from  ratings
+where product_id = ?
+`;
 
 const fetchUserCart = `
   SELECT 
@@ -80,24 +93,21 @@ WHERE
     ci.user_id = ?
   `;
 
-const removeFromCart = `
-DELETE FROM cart_items
-WHERE user_id = ?
-AND product_id = ?`;
-
-const updateCartitemQuantity = `
-  UPDATE cart_items
-SET quantity =  ?
-WHERE user_id = ?
-AND product_id = ? 
-AND quantity > 0; 
-  `;
-
 const rateProduct = `
   INSERT INTO
   ratings (product_id, user_id,score,comment,date_created)
   VALUES (?,?,?,?,?)
   `;
+
+const removeFromCart = `
+DELETE FROM cart_items
+WHERE user_id = ?
+AND product_id = ?`;
+
+const removeProductRating = `
+delete from ratings where 
+product_id = ? and user_id = ?
+`;
 
 const removeSavedProduct = `
   DELETE FROM favorites WHERE (product_id = ?) and (user_id = ?);
@@ -109,10 +119,13 @@ const saveProduct = `
   VALUES (?,?)
   `;
 
-const fetchAllBrands = `
-SELECT * from brands`;
-const fetchAllCategories = `
-SELECT * from categories`;
+const updateCartitemQuantity = `
+  UPDATE cart_items
+SET quantity =  ?
+WHERE user_id = ?
+AND product_id = ? 
+AND quantity > 0; 
+  `;
 
 module.exports = {
   addProductToCart,
@@ -120,12 +133,14 @@ module.exports = {
   fetchAllBrands,
   fetchAllCategories,
   fetchProductDetails,
+  fetchProductRatings,
   fetchProductsByBrand,
   fetchProductsByCategory,
   fetchUserCart,
-  removeFromCart,
-  updateCartitemQuantity,
   rateProduct,
   removeSavedProduct,
+  removeFromCart,
+  removeProductRating,
   saveProduct,
+  updateCartitemQuantity,
 };
