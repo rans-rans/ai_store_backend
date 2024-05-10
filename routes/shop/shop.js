@@ -18,14 +18,18 @@ router.post("/add-to-cart", async function (req, res) {
     });
 });
 
+router.post("/fetch-brand-products", async function (req, res) {
+  const brandId = req.body["brand_id"];
+  const products = await shopController.getProductsProductsByBrand(brandId);
+  res.send(products);
+});
+
 router.post("/fetch-category-products", async function (req, res) {
   const categoryId = req.body["category_id"];
-  const userId = req.body.id;
   const products = await shopController.getProductsProductsByCategory(
-    categoryId,
-    userId
+    categoryId
   );
-  res.send(products[0]);
+  res.send(products);
 });
 
 router.post("/fetch-product-ratings", async (req, res) => {
@@ -37,16 +41,6 @@ router.post("/fetch-product-ratings", async (req, res) => {
 router.get("/fetch-products", async function (req, res) {
   const allProducts = await shopController.getProducts();
   res.send(allProducts);
-});
-
-router.post("/fetch-brand-products", async function (req, res) {
-  const userId = req.body["id"];
-  const brandId = req.body["brand_id"];
-  const products = await shopController.getProductsProductsByBrand(
-    brandId,
-    userId
-  );
-  res.send(products[0]);
 });
 
 router.get("/fetch-brands", async function (req, res) {

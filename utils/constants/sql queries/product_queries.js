@@ -65,10 +65,9 @@ const fetchProductDetails = `
     WHERE p.id = ?
   `;
 
-const fetchProductsByCategory =
-  fetchAllProductsQuery + ` WHERE category_id = ?`;
+const fetchProductsByCategory = `${fetchAllProductsQuery} WHERE category_id = ?`;
 
-const fetchProductsByBrand = fetchAllProductsQuery + ` WHERE brand_id = ?`;
+const fetchProductsByBrand = `${fetchAllProductsQuery} WHERE brand_id = ?`;
 
 const fetchProductRatings = `
 select * from  ratings

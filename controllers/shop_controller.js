@@ -55,10 +55,10 @@ async function getProductsProductsByCategory(categoryId) {
   const databaseResult = await database.query(query, [categoryId]);
   return databaseResult[0];
 }
-async function getProductsProductsByBrand(brandId) {
+async function getProductsByBrand(brandId) {
   const query = dbQueries.fetchProductsByBrand;
   const databaseResult = await database.query(query, [brandId]);
-  return databaseResult;
+  return databaseResult[0];
 }
 async function getBrands() {
   const result = await database.execute(dbQueries.fetchAllBrands);
@@ -174,7 +174,7 @@ module.exports = {
   getProductDetails,
   getProductRatings,
   getProductsProductsByCategory,
-  getProductsProductsByBrand,
+  getProductsProductsByBrand: getProductsByBrand,
   getUserCart,
   removeFromCart,
   rateProduct,
