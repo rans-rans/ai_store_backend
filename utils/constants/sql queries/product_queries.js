@@ -92,6 +92,10 @@ WHERE
     ci.user_id = ?
   `;
 
+  const fetchUserOrders=`
+  select * from orders where user_id = ?
+  `
+
 const rateProduct = `
   INSERT INTO
   ratings (product_id, user_id,score,comment,date_created)
@@ -136,6 +140,7 @@ module.exports = {
   fetchProductsByBrand,
   fetchProductsByCategory,
   fetchUserCart,
+  fetchUserOrders,
   rateProduct,
   removeSavedProduct,
   removeFromCart,

@@ -75,6 +75,10 @@ async function getUserCart(userId) {
   return result;
 }
 
+async function getUserOrders(userId) {
+  
+}
+
 async function rateProduct(data) {
   const query = dbQueries.rateProduct;
   try {
