@@ -76,7 +76,9 @@ async function getUserCart(userId) {
 }
 
 async function getUserOrders(userId) {
-  
+  const query = dbQueries.fetchUserOrders;
+  const result = await database.query(query, [userId]);
+  return result[0];
 }
 
 async function rateProduct(data) {
@@ -180,6 +182,7 @@ module.exports = {
   getProductsProductsByCategory,
   getProductsProductsByBrand: getProductsByBrand,
   getUserCart,
+  getUserOrders,
   removeFromCart,
   rateProduct,
   removeProductRating,

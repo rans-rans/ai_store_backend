@@ -73,6 +73,16 @@ router.post("/fetch-user-cart", async function (req, res) {
   res.send(cart[0]);
 });
 
+router.post("/fetch-user-orders", (req, res) => {
+  shopController.getUserOrders(req.body.id)
+    .then((orders) => {
+      res.send(orders);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
 router.post("/edit-cartitem-quantity", async function (req, res) {
   const userId = req.body["id"];
   const productId = req.body["product_id"];
