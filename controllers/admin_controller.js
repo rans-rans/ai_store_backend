@@ -31,6 +31,29 @@ async function addCategory(name, imgUrl) {
   }
 }
 
+async function addProduct(product) {
+  try {
+    const query = queries.addProduct;
+    const result = await database.query(query, [
+      product["id"],
+      product["name"],
+      product["description"],
+      product["category_id"],
+      product["brand_id"],
+      product["quantity"],
+      product["price"],
+      product["images"],
+      product["variants"],
+      product["discount"],
+    ]);
+    console.log(result[0]);
+    return result[0];
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 async function fetchBrands() {
   const query = "select * from brands order by	name";
   const data = await database.execute(query);
@@ -48,6 +71,7 @@ async function fetchCategories() {
 module.exports = {
   addBrand,
   addCategory,
+  addProduct,
   fetchBrands,
   fetchCategories,
 };

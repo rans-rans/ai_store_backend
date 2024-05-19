@@ -4,7 +4,17 @@ const adminController = require("../../controllers/admin_controller");
 
 const router = express.Router();
 
-router.post("/add-product", (req, res) => {});
+router.post("/add-product", (req, res) => {
+  const productData = req.body;
+  adminController
+    .addProduct(productData)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
 
 router.post("/add-brand", (req, res) => {
   const data = req.body;
