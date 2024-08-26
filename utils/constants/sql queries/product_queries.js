@@ -1,10 +1,7 @@
 const addProductToCart = `
   INSERT INTO
-  cart_items (product_id, user_id, variant, quantity) 
-  VALUES (?,?,?,?)`;
-
-const fetchAllBrands = `
-SELECT * from brands`;
+  cart_items (product_id, user_id, quantity) 
+  VALUES (?,?,?)`;
 
 const fetchAllCategories = `
 SELECT * from categories`;
@@ -16,10 +13,9 @@ SELECT
     p.price,
     p.discount,
     p.quantity,
-    p.brand_id,
     p.category_id,
-    IFNULL(avg_score, -1) AS rating_score,
-    JSON_UNQUOTE(JSON_EXTRACT(p.images, '$[0]')) as image
+    p.images,
+    IFNULL(avg_score, -1) AS rating_score
 FROM 
     products p
 LEFT JOIN (
@@ -38,21 +34,17 @@ const fetchProductDetails = `
       p.name,
       p.price,
       p.quantity,
-      b.name AS brand_name,
       c.name AS category_name,
       p.discount,
       p.images,
       IFNULL(avg_score, -1) AS rating_score,
       p.description,
-      p.variants,
       CASE
         WHEN f.user_id IS NOT NULL THEN TRUE
         ELSE FALSE
       END AS is_favorite
     FROM 
       products p
-    JOIN 
-      brands b ON p.brand_id = b.id
     JOIN 
       categories c ON p.category_id = c.id
     LEFT JOIN (
@@ -67,7 +59,6 @@ const fetchProductDetails = `
 
 const fetchProductsByCategory = `${fetchAllProductsQuery} WHERE category_id = ?`;
 
-const fetchProductsByBrand = `${fetchAllProductsQuery} WHERE brand_id = ?`;
 
 const fetchProductRatings = `
 select * from  ratings
@@ -82,7 +73,6 @@ const fetchUserCart = `
     p.id,
     p.images,
     ci.user_id,
-    ci.variant,
     ci.quantity
 FROM 
     cart_items ci
@@ -133,11 +123,9 @@ AND quantity > 0;
 module.exports = {
   addProductToCart,
   fetchAllProductsQuery,
-  fetchAllBrands,
   fetchAllCategories,
   fetchProductDetails,
   fetchProductRatings,
-  fetchProductsByBrand,
   fetchProductsByCategory,
   fetchUserCart,
   fetchUserOrders,

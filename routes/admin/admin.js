@@ -16,20 +16,6 @@ router.post("/add-product", (req, res) => {
     });
 });
 
-router.post("/add-brand", (req, res) => {
-  const data = req.body;
-  const brandName = data["brand_name"];
-  const brandImage = data["brand_img"];
-  adminController
-    .addBrand(brandName, brandImage)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
-      res.send(error);
-    });
-});
-
 router.post("/add-category", (req, res) => {
   const data = req.body;
   const categoryName = data["category_name"];
@@ -42,11 +28,6 @@ router.post("/add-category", (req, res) => {
     .catch((error) => {
       res.send(error);
     });
-});
-
-router.get("/fetch-brands", async (req, res) => {
-  const data = await adminController.fetchBrands();
-  res.send(data);
 });
 
 router.get("/fetch-categories", async (req, res) => {

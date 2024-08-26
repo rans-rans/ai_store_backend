@@ -7,7 +7,6 @@ async function addProductToCart(cartData) {
     const response = await database.query(query, [
       cartData["product_id"],
       cartData["id"],
-      cartData["variant"],
       cartData["quantity"],
     ]);
     return response;
@@ -32,7 +31,7 @@ async function getProducts() {
     const databaseResult = await database.query(query, []);
     return databaseResult[0];
   } catch (error) {
-    res.send(error);
+    return error;
   }
 }
 async function getProductDetails(productId, userId) {
@@ -54,15 +53,6 @@ async function getProductsProductsByCategory(categoryId) {
   const query = dbQueries.fetchProductsByCategory;
   const databaseResult = await database.query(query, [categoryId]);
   return databaseResult[0];
-}
-async function getProductsByBrand(brandId) {
-  const query = dbQueries.fetchProductsByBrand;
-  const databaseResult = await database.query(query, [brandId]);
-  return databaseResult[0];
-}
-async function getBrands() {
-  const result = await database.execute(dbQueries.fetchAllBrands);
-  return result;
 }
 async function getCategories() {
   const result = await database.execute(dbQueries.fetchAllCategories);
@@ -175,12 +165,10 @@ module.exports = {
   addProductToCart,
   editCartitemQuantity,
   getProducts,
-  getBrands,
   getCategories,
   getProductDetails,
   getProductRatings,
   getProductsProductsByCategory,
-  getProductsProductsByBrand: getProductsByBrand,
   getUserCart,
   getUserOrders,
   removeFromCart,

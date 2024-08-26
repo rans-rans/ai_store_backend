@@ -4,7 +4,7 @@ const authMiddleware = require("../../middlewares/auth_middleware");
 
 const router = express.Router();
 
-router.use(authMiddleware.authenticateToken);
+// router.use(authMiddleware.authenticateToken);
 
 router.post("/add-to-cart", async function (req, res) {
   const cartItem = req.body;
@@ -18,11 +18,6 @@ router.post("/add-to-cart", async function (req, res) {
     });
 });
 
-router.post("/fetch-brand-products", async function (req, res) {
-  const brandId = req.body["brand_id"];
-  const products = await shopController.getProductsProductsByBrand(brandId);
-  res.send(products);
-});
 
 router.post("/fetch-category-products", async function (req, res) {
   const categoryId = req.body["category_id"];
@@ -39,14 +34,16 @@ router.post("/fetch-product-ratings", async (req, res) => {
 });
 
 router.get("/fetch-products", async function (req, res) {
-  const allProducts = await shopController.getProducts();
-  res.send(allProducts);
+  console.log('hello')
+  try {
+    
+    const allProducts = await shopController.getProducts();
+    res.send(allProducts);
+  } catch (error) {
+    console.log(error)
+  }
 });
 
-router.get("/fetch-brands", async function (req, res) {
-  const brands = await shopController.getBrands();
-  res.send(brands[0]);
-});
 
 router.get("/fetch-categories", async function (req, res) {
   const categories = await shopController.getCategories();

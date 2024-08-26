@@ -4,7 +4,6 @@ module.exports = class Product {
     name,
     price,
     quantity,
-    brand_id,
     category_id,
     discount,
     images
@@ -13,7 +12,6 @@ module.exports = class Product {
     this.name = name;
     this.price = price;
     this.quantity = quantity;
-    this.brand_id = brand_id;
     this.category_id = category_id;
     this.discount = discount;
     this.images = images;
@@ -25,7 +23,6 @@ module.exports = class Product {
       name: this.name,
       price: this.price,
       quantity: this.quantity,
-      brand_id: this.brand_id,
       category_id: this.category_id,
       discount: this.discount,
       images: this.images,

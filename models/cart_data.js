@@ -7,8 +7,7 @@ module.exports = class CartItem {
     ) {
       this.product_id = product_id;
       this.user_id = user_id;
-      this.quantity = quantity,
-      this.variant = variant
+      this.quantity = quantity
     }
   };
   
